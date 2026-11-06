@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>tv-embed</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{border:0;width:100%;height:100%}</style>
+</head>
+<body>
+<!-- Kleine brug: toont een YouTube-speler met een echt https-adres, zodat de speler geen fout 153 geeft.
+     Gebruik: index.html?v=VIDEO_ID. Commando's playVideo/pauseVideo kunnen via postMessage van de ouderpagina komen. -->
+<iframe id="p" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<script>
+var id = (location.search.match(/[?&]v=([\w-]{6,20})/) || [])[1], f = document.getElementById("p");
+if (id) f.src = "https://www.youtube.com/embed/" + id + "?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1&controls=0&hl=nl&origin=" + encodeURIComponent(location.origin);
+window.addEventListener("message", function (e) {
+  var d = e.data; if (typeof d === "string") { try { d = JSON.parse(d); } catch (x) { return; } }
+  if (d && d.event === "command" && (d.func === "playVideo" || d.func === "pauseVideo")) f.contentWindow.postMessage(JSON.stringify({ event: "command", func: d.func, args: "" }), "https://www.youtube.com");
+});
+</script>
+</body>
+</html>
