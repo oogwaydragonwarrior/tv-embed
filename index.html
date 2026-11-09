@@ -12,7 +12,8 @@
 <iframe id="p" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
 <script>
 var id = (location.search.match(/[?&]v=([\w-]{6,20})/) || [])[1], f = document.getElementById("p");
-if (id) f.src = "https://www.youtube.com/embed/" + id + "?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1&controls=0&hl=nl&origin=" + encodeURIComponent(location.origin);
+var mute = /[?&]m=1/.test(location.search);  // m=1: zonder geluid en in een lus (achtergrondbeeld)
+if (id) f.src = "https://www.youtube.com/embed/" + id + "?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1&controls=0&hl=nl&origin=" + encodeURIComponent(location.origin) + (mute ? "&mute=1&loop=1&playlist=" + id : "");
 window.addEventListener("message", function (e) {
   var d = e.data; if (typeof d === "string") { try { d = JSON.parse(d); } catch (x) { return; } }
   if (d && d.event === "command" && (d.func === "playVideo" || d.func === "pauseVideo")) f.contentWindow.postMessage(JSON.stringify({ event: "command", func: d.func, args: "" }), "https://www.youtube.com");
